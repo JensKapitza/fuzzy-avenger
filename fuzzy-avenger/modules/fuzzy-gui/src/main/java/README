@@ -1,0 +1,10 @@
+Tiff und andere Bilder mit:
+http://commons.apache.org/proper/commons-imaging/
+
+oder 
+
+https://github.com/haraldk/TwelveMonkeys (bislang mehr Möglichkeiten)
+
+
+parser automatisch erkennen, hilfe durch: 
+	ImageIO.getReaderFileSuffixes();

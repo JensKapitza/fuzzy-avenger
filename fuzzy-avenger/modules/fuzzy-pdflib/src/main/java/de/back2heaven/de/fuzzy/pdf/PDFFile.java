@@ -1,10 +1,9 @@
 package de.back2heaven.de.fuzzy.pdf;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
@@ -15,19 +14,36 @@ public class PDFFile {
 
 	private int pages;
 
-	public PDPage getPage(int pageNum) throws IOException {
+	private String password;
+
+	private void parse() throws IOException {
 		if (document == null) {
 			throw new IOException("document not open");
 		}
-		PDPage page = null;
-		return page;
+
+		if (document.isEncrypted()) {
+			try {
+				if (password == null) {
+					document.decrypt("");
+				} else {
+					document.decrypt(password);
+				}
+			} catch (CryptographyException e) {
+				throw new IOException("problems with decrypting document");
+			}
+		}
+
 	}
 
-	public BufferedImage getPageImage(int pageNum) throws IOException {
-		PDPage page = getPage(pageNum);
-		if (page == null) {
-			throw new IOException("page: " + pageNum + " not found");
+	public PDFPage getPage(int pageNum) throws IOException {
+		if (document == null) {
+			throw new IOException("document not open");
 		}
-		return page.convertToImage();
+		if (pageNum > document.getNumberOfPages()) {
+			throw new IOException("page index is out of range");
+		}
+		PDPage page = (PDPage) document.getDocumentCatalog().getAllPages().get(pageNum);
+		return new PDFPage(this, page, pageNum);
 	}
+
 }
