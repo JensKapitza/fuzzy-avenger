@@ -7,6 +7,10 @@
 	<packaging>pom</packaging>
 	<name>Fuzzy Avenger PDF Tool</name>
 	<description>PDF Tool</description>
+	<modules>
+		<module>modules/fuzzy-gui</module>
+		<module>modules/fuzzy-pdflib</module>
+	</modules>
 	<build>
 		<finalName>${project.groupId}-${project.artifactId}</finalName>
 		<plugins>
@@ -22,5 +26,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

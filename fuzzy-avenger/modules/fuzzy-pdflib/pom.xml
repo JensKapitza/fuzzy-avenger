@@ -4,7 +4,7 @@
 	<artifactId>fuzzy-pdflib</artifactId>
 	<name>PDF lib</name>
 	<build>
-		<finalName>${project.groupId}-${project.artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -40,5 +40,6 @@
 		<groupId>de.back2heaven</groupId>
 		<artifactId>fuzzy-avenger</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 </project>
