@@ -76,6 +76,14 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.back2heaven</groupId>
+			<artifactId>fuzzy-pdflib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 	<parent>
 		<groupId>de.back2heaven</groupId>
 		<artifactId>fuzzy-avenger</artifactId>
