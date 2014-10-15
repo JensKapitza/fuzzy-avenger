@@ -91,6 +91,11 @@
 			<version>0.18</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 
 
 	</dependencies>
@@ -106,6 +111,14 @@
 			<id>apache.snapshots</id>
 			<url>http://repository.apache.org/snapshots/</url>
 		</repository>
+		<repository>
+			<id>apache.snapshots.imaging</id>
+			<url>http://repository.apache.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
 		<repository>
 			<releases />
 			<snapshots>
