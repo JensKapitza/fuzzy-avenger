@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>1.8.7</version>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -35,6 +35,64 @@
 			<artifactId>bcmail-jdk15</artifactId>
 			<version>1.44</version>
 		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jai-imageio</groupId>
+			<artifactId>jai-imageio-core-standalone</artifactId>
+			<version>1.2-pre-dr-b04-2014-09-13</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jai-imageio</groupId>
+			<artifactId>jai-imageio-jpeg2000</artifactId>
+			<version>1.2-pre-dr-b04-2014-09-13</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.twelvemonkeys</groupId>
+			<artifactId>twelvemonkeys-core</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-jpeg</artifactId>
+			<version>3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-iff</artifactId>
+			<version>3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-tiff</artifactId>
+			<version>3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.boofcv</groupId>
+			<artifactId>feature</artifactId>
+			<version>0.18</version>
+		</dependency>
+		<dependency>
+			<groupId>org.boofcv</groupId>
+			<artifactId>io</artifactId>
+			<version>0.18</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.boofcv</groupId>
+			<artifactId>recognition</artifactId>
+			<version>0.18</version>
+		</dependency>
+		<dependency>
+			<groupId>org.boofcv</groupId>
+			<artifactId>geo</artifactId>
+			<version>0.18</version>
+		</dependency>
+
+
+
 	</dependencies>
 	<parent>
 		<groupId>de.back2heaven</groupId>
@@ -42,4 +100,22 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
+	<repositories>
+		<repository>
+			<id>apache.snapshots</id>
+			<url>http://repository.apache.org/snapshots/</url>
+		</repository>
+		<repository>
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mygrid-repository</id>
+			<name>myGrid Repository</name>
+			<url>http://www.mygrid.org.uk/maven/repository</url>
+		</repository>
+	</repositories>
+
+
 </project>
