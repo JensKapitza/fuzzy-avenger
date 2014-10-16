@@ -15,7 +15,11 @@ public class PathListCell extends ListCell<Path> {
 		setGraphic(null);
 		setText(null);
 		if (item != null) {
-			setText(item.getFileName().toString());
+			if (item.getFileName() != null) {
+				setText(item.getFileName().toString());
+			} else {
+				setText("ROOT");
+			}
 			boolean dir = Files.isDirectory(item);
 			Image img;
 			if (dir) {
