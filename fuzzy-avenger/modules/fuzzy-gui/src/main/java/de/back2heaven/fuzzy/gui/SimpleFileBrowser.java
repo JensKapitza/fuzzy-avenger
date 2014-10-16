@@ -56,6 +56,7 @@ public class SimpleFileBrowser extends ListView<Path> {
 					@Override
 					public FileVisitResult visitFile(Path file,
 							BasicFileAttributes attrs) throws IOException {
+						if (Files.isDirectory(file) || FileAccepter.accepts(file))
 						getItems().add(file);
 						return super.visitFile(file, attrs);
 					}

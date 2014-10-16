@@ -9,6 +9,13 @@ import javafx.scene.image.ImageView;
 
 public class PathListCell extends ListCell<Path> {
 
+	private static final Image DIR_IMG = new Image(
+			PathListCell.class
+					.getResourceAsStream("/icons/framework/res/folder_32.png"));
+	private static final Image FILE_IMG = new Image(
+			PathListCell.class
+					.getResourceAsStream("/icons/framework/res/templates_32.png"));
+
 	@Override
 	protected void updateItem(Path item, boolean empty) {
 		super.updateItem(item, empty);
@@ -21,14 +28,8 @@ public class PathListCell extends ListCell<Path> {
 				setText("ROOT");
 			}
 			boolean dir = Files.isDirectory(item);
-			Image img;
-			if (dir) {
-				img = new Image(getClass().getResourceAsStream(
-						"/icons/framework/res/folder_32.png"));
-			} else {
-				img = new Image(getClass().getResourceAsStream(
-						"/icons/framework/res/templates_32.png"));
-			}
+			Image img = dir ? DIR_IMG : FILE_IMG;
+
 			if (!empty) {
 				setGraphic(new ImageView(img));
 			}
