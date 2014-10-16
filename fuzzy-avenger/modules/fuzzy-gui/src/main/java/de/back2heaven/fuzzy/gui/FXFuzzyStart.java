@@ -1,14 +1,20 @@
 package de.back2heaven.fuzzy.gui;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class FXFuzzyStart extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setWidth(400);
-		primaryStage.setHeight(400);
+		BorderPane root = new BorderPane();
+		root.setTop(new MyMenu());
+		root.setLeft(new SimpleFileBrowser());
+		Scene scene = new  Scene(root );
+		primaryStage.setScene(scene);
+		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
 

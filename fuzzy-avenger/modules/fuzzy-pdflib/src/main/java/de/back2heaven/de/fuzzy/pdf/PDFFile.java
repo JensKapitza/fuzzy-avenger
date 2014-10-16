@@ -3,6 +3,8 @@ package de.back2heaven.de.fuzzy.pdf;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -77,6 +79,14 @@ public class PDFFile {
 
 	public Path getPath() {
 		return path;
+	}
+	
+	public List<PDFPage> getPages(int ... pageNums) throws IOException{
+		ArrayList<PDFPage> pages=new ArrayList<>();
+		for (int pageNum : pageNums){
+			pages.add(getPage(pageNum));
+		}
+		return pages;
 	}
 
 }
