@@ -3,6 +3,7 @@ package de.back2heaven.fuzzy.gui;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import de.back2heaven.de.fuzzy.pdf.PDFFile;
 import javafx.scene.image.ImageView;
 
 public class Preview extends ImageView {
@@ -16,7 +17,14 @@ public class Preview extends ImageView {
 			if (!Files.isDirectory(p)) {
 				try {
 					if (FileAccepter.isImage(p)) {
-						setImage(FileAccepter.readImages(p,true).get(0));
+						setImage(FileAccepter.readImages(p, true).get(0));
+					}
+
+					if (FileAccepter.isPDF(p)) {
+						PDFFile pfile = new PDFFile(p, null);
+						setImage(FileAccepter.convertImage(pfile.getPage(0)
+								.getImage()));
+						pfile.close();
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();

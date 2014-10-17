@@ -31,11 +31,7 @@ public class FileAccepter {
 		return false;
 	}
 
-	public static boolean accepts(Path file) throws IOException {
-		// Get the reader
-		if (isImage(file)) {
-			return true;
-		}
+	public static boolean isPDF(Path file) throws IOException {
 		// PDF erlauben
 		byte[] buffer = new byte[4];
 		InputStream in = Files.newInputStream(file);
@@ -45,6 +41,14 @@ public class FileAccepter {
 		// check if it is pdf
 		if (buffer[0] == '%' && buffer[1] == 'P' && buffer[2] == 'D'
 				&& buffer[3] == 'F') {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean accepts(Path file) throws IOException {
+		// Get the reader
+		if (isImage(file) || isPDF(file)) {
 			return true;
 		}
 
@@ -90,18 +94,21 @@ public class FileAccepter {
 		}
 
 		for (BufferedImage bf : imgs) {
-
-			WritableImage wr = new WritableImage(bf.getWidth(), bf.getHeight());
-			PixelWriter pw = wr.getPixelWriter();
-			for (int x = 0; x < bf.getWidth(); x++) {
-				for (int y = 0; y < bf.getHeight(); y++) {
-					pw.setArgb(x, y, bf.getRGB(x, y));
-				}
-			}
-			results.add(wr);
+			results.add(convertImage(bf));
 		}
 
 		return results;
+	}
+
+	public static Image convertImage(BufferedImage bf) {
+		WritableImage wr = new WritableImage(bf.getWidth(), bf.getHeight());
+		PixelWriter pw = wr.getPixelWriter();
+		for (int x = 0; x < bf.getWidth(); x++) {
+			for (int y = 0; y < bf.getHeight(); y++) {
+				pw.setArgb(x, y, bf.getRGB(x, y));
+			}
+		}
+		return wr;
 	}
 
 	public static List<Image> readImages(Path file, boolean onePageOnly)

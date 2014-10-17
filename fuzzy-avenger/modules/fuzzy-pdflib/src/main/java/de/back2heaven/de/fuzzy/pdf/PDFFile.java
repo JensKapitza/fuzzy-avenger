@@ -89,4 +89,8 @@ public class PDFFile {
 		return pages;
 	}
 
+	public void close() throws IOException {
+		document.close();
+	}
+
 }
