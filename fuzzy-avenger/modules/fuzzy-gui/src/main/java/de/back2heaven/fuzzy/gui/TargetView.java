@@ -32,19 +32,19 @@ public class TargetView extends ListView<PageItem> {
 		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		setOnDragDetected(de -> {
-			Dragboard dragBoard = startDragAndDrop(TransferMode.MOVE);
+			Dragboard dragBoard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
 
 			ClipboardContent content = new ClipboardContent();
 			ObservableList<PageItem> pi = getSelectionModel()
 					.getSelectedItems();
 			content.put(pageItemDataFormat, new PageItems(pi));
-			getItems().removeAll(pi);
+//			getItems().removeAll(pi);
 			dragBoard.setContent(content);
 			getSelectionModel().clearSelection();
 		});
 
 		setOnDragOver(dragEvent -> {
-			dragEvent.acceptTransferModes(TransferMode.MOVE);
+			dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 		});
 
 		setOnDragDropped(dragEvent -> {
@@ -61,10 +61,24 @@ public class TargetView extends ListView<PageItem> {
 			while (!(p instanceof PageItemListCell) && p != null) {
 				p = p.getParent();
 			}
-
+			int index = -1;
+			System.out.println(dragEvent.getTransferMode());
+			if (dragEvent.getTransferMode() == TransferMode.MOVE){
+				System.out.println("---");
+				getItems().removeAll(item);
+			} else {
+				ArrayList<PageItem> itemsx = new ArrayList<>(getItems());
+				itemsx.addAll(item);
+				// copy should change name #1
+				item.forEach(e -> {
+					e.countUp(itemsx);
+				});
+			}
+			
 			if (p instanceof PageItemListCell) {
-				int index = getItems()
-						.indexOf(((PageItemListCell) p).getItem());
+				index = getItems().indexOf(((PageItemListCell) p).getItem());
+			}
+			if (index != -1) {
 				getItems().addAll(index, item);
 			} else {
 				getItems().addAll(item);
