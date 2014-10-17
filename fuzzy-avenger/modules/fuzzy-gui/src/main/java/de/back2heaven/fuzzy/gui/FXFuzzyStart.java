@@ -1,8 +1,11 @@
 package de.back2heaven.fuzzy.gui;
 
+import java.nio.file.Paths;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class FXFuzzyStart extends Application {
@@ -11,7 +14,12 @@ public class FXFuzzyStart extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		BorderPane root = new BorderPane();
 		root.setTop(new MyMenu());
-		root.setLeft(new SimpleFileBrowser());
+		VBox box = new VBox();
+		Preview p = new Preview();
+		box.getChildren().add(p);
+		root.setCenter(box);
+
+		root.setLeft(new SimpleFileBrowser(Paths.get("/home/jens"),p));
 		TargetView tv = new TargetView();
 		tv.getItems()
 				.addAll(new PageItem("demo", PathListCell.class

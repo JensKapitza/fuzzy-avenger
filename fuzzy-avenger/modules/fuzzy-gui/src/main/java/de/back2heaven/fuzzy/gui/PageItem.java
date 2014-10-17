@@ -48,7 +48,7 @@ public class PageItem implements Serializable {
 		this.iconPath = icon;
 	}
 
-	public Object getData() {
+	public Serializable[] getData() {
 		return data;
 	}
 

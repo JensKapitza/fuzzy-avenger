@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -16,14 +20,22 @@ import javax.imageio.stream.ImageInputStream;
 
 public class FileAccepter {
 
-	public static boolean accepts(Path file) throws IOException {
-		// Get the reader
-		Iterator<ImageReader> readers = ImageIO.getImageReaders(file.toFile());
+	public static boolean isImage(Path file) throws IOException {
+		ImageInputStream input = ImageIO.createImageInputStream(file.toFile());
+		Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
 
 		if (readers.hasNext()) {
 			return true;
 		}
 
+		return false;
+	}
+
+	public static boolean accepts(Path file) throws IOException {
+		// Get the reader
+		if (isImage(file)) {
+			return true;
+		}
 		// PDF erlauben
 		byte[] buffer = new byte[4];
 		InputStream in = Files.newInputStream(file);
@@ -39,11 +51,13 @@ public class FileAccepter {
 		return false;
 	}
 
-	public static List<BufferedImage> readImages(InputStream imageStream)
+	public static List<Image> readImages(Object inputx, boolean onePageOnly)
 			throws IOException {
 		// Create input stream
-		ImageInputStream input = ImageIO.createImageInputStream(imageStream);
+		ImageInputStream input = ImageIO.createImageInputStream(inputx);
 		ArrayList<BufferedImage> imgs = new ArrayList<>();
+		ArrayList<Image> results = new ArrayList<>();
+
 		try {
 			// Get the reader
 			Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
@@ -62,6 +76,9 @@ public class FileAccepter {
 				for (int i = 0; i < nums; i++) {
 					BufferedImage image = reader.read(i, param);
 					imgs.add(image);
+					if (onePageOnly) {
+						break;
+					}
 				}
 			} finally {
 				// Dispose reader in finally block to avoid memory leaks
@@ -71,7 +88,24 @@ public class FileAccepter {
 			// Close stream in finally block to avoid resource leaks
 			input.close();
 		}
-		return imgs;
+
+		for (BufferedImage bf : imgs) {
+
+			WritableImage wr = new WritableImage(bf.getWidth(), bf.getHeight());
+			PixelWriter pw = wr.getPixelWriter();
+			for (int x = 0; x < bf.getWidth(); x++) {
+				for (int y = 0; y < bf.getHeight(); y++) {
+					pw.setArgb(x, y, bf.getRGB(x, y));
+				}
+			}
+			results.add(wr);
+		}
+
+		return results;
 	}
 
+	public static List<Image> readImages(Path file, boolean onePageOnly)
+			throws IOException {
+		return readImages(file.toFile(), onePageOnly);
+	}
 }

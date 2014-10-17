@@ -16,24 +16,36 @@ import javafx.scene.input.MouseButton;
 
 public class SimpleFileBrowser extends ListView<Path> {
 
-	public SimpleFileBrowser() throws IOException {
+	public SimpleFileBrowser(Path base, Preview prev) throws IOException {
 		setCellFactory(c -> {
 			ListCell<Path> cell = new PathListCell();
 			return cell;
 		});
 
+		getSelectionModel().selectedItemProperty().addListener(
+				(c, old, newO) -> {
+					if (newO != null) {
+						PreviewEvent pe = new PreviewEvent(this, newO);
+						prev.fireEvent(pe);
+					}
+
+				});
 		// go now for files
-		Path base = Paths.get(".").toAbsolutePath();
-		walk(base);
+		walk(base == null ? Paths.get(".").toAbsolutePath() : base
+				.toAbsolutePath());
 
 		setOnMouseClicked(e -> {
 			if (e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY) {
 				Path p = getSelectionModel().getSelectedItem();
-				getItems().clear();
-				try {
-					walk(p);
-				} catch (Exception e1) {
-					getScene().getWindow().fireEvent(new EventError(this, e1));
+				if (Files.isDirectory(p)) {
+
+					getItems().clear();
+					try {
+						walk(p);
+					} catch (Exception e1) {
+						getScene().getWindow().fireEvent(
+								new EventError(this, e1));
+					}
 				}
 			}
 
@@ -44,7 +56,7 @@ public class SimpleFileBrowser extends ListView<Path> {
 	public void walk(Path base) throws IOException {
 		// current dir.
 		setUserData(base);
-		
+
 		Path parent = base.getParent();
 
 		if (parent != null) {
@@ -56,8 +68,10 @@ public class SimpleFileBrowser extends ListView<Path> {
 					@Override
 					public FileVisitResult visitFile(Path file,
 							BasicFileAttributes attrs) throws IOException {
-						if (Files.isDirectory(file) || FileAccepter.accepts(file))
-						getItems().add(file);
+						if (Files.isDirectory(file)
+								|| FileAccepter.accepts(file)) {
+							getItems().add(file);
+						}
 						return super.visitFile(file, attrs);
 					}
 
