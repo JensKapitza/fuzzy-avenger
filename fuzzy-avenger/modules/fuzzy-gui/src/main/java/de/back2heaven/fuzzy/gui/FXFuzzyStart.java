@@ -12,8 +12,15 @@ public class FXFuzzyStart extends Application {
 		BorderPane root = new BorderPane();
 		root.setTop(new MyMenu());
 		root.setLeft(new SimpleFileBrowser());
-		root.setRight(new TargetView());
-		Scene scene = new  Scene(root );
+		TargetView tv = new TargetView();
+		tv.getItems()
+				.addAll(new PageItem("demo", PathListCell.class
+						.getResource("/icons/framework/res/folder_32.png")),
+						new PageItem("demo2", null),
+						new PageItem("demo3", null));
+		root.setRight(tv);
+
+		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.sizeToScene();
 		primaryStage.show();

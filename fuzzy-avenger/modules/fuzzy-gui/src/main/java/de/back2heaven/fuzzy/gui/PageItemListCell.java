@@ -12,8 +12,11 @@ public class PageItemListCell extends ListCell<PageItem> {
 		setText(null);
 		if (item != null) {
 			setText(item.getName());
-			if (!empty) {
-				setGraphic(new ImageView(item.getIcon()));
+			if (!empty && item.getIcon() != null) {
+				ImageView iv = new ImageView(item.getIcon());
+				iv.setFitWidth(16);
+				iv.setPreserveRatio(true);
+				setGraphic(iv);
 			}
 		}
 	}

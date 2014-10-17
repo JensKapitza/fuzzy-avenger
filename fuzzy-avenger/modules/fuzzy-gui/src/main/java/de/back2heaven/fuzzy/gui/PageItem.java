@@ -1,19 +1,24 @@
 package de.back2heaven.fuzzy.gui;
 
+import java.io.Serializable;
+import java.net.URL;
+
 import javafx.scene.image.Image;
 
-public class PageItem {
+public class PageItem implements Serializable {
+
+	private static final long serialVersionUID = 1848466658628544472L;
 
 	private String name;
 
-	private Object data;
+	private Serializable[] data;
 
-	private Image icon;
+	private URL iconPath;
 
-	public PageItem(String name, Object data, Image icon) {
+	public PageItem(String name, URL icon, Serializable... data) {
 		this.data = data;
 		this.name = name;
-		this.icon = icon;
+		this.iconPath = icon;
 	}
 
 	public Object getData() {
@@ -25,6 +30,9 @@ public class PageItem {
 	}
 
 	public Image getIcon() {
-		return icon;
+		if (iconPath == null) {
+			return null;
+		}
+		return new Image(iconPath.toString());
 	}
 }
