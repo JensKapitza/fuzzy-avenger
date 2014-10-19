@@ -1,4 +1,4 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.targetview;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;

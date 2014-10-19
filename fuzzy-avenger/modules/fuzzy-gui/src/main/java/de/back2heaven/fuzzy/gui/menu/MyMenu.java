@@ -1,4 +1,4 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.menu;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;

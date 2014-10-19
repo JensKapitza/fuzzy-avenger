@@ -1,9 +1,11 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.preview;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import de.back2heaven.de.fuzzy.pdf.PDFFile;
+import de.back2heaven.fuzzy.gui.events.PreviewEvent;
+import de.back2heaven.fuzzy.gui.filebrowser.FileAccepter;
 import javafx.scene.image.ImageView;
 
 public class Preview extends ImageView {

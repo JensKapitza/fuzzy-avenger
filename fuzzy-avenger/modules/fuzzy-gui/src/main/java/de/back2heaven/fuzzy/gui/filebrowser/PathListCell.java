@@ -1,4 +1,4 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.filebrowser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

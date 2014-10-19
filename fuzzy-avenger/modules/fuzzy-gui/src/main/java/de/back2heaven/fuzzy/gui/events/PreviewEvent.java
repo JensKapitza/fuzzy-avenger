@@ -1,4 +1,4 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.events;
 
 import java.nio.file.Path;
 

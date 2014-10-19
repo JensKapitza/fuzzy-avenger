@@ -2,6 +2,12 @@ package de.back2heaven.fuzzy.gui;
 
 import java.nio.file.Paths;
 
+import de.back2heaven.fuzzy.gui.filebrowser.PathListCell;
+import de.back2heaven.fuzzy.gui.filebrowser.SimpleFileBrowser;
+import de.back2heaven.fuzzy.gui.menu.MyMenu;
+import de.back2heaven.fuzzy.gui.preview.Preview;
+import de.back2heaven.fuzzy.gui.targetview.PageItem;
+import de.back2heaven.fuzzy.gui.targetview.TargetView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

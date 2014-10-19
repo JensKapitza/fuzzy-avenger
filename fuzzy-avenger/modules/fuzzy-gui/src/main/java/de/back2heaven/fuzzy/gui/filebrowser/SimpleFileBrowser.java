@@ -1,4 +1,4 @@
-package de.back2heaven.fuzzy.gui;
+package de.back2heaven.fuzzy.gui.filebrowser;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -10,6 +10,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 
+import de.back2heaven.fuzzy.gui.events.EventError;
+import de.back2heaven.fuzzy.gui.events.PreviewEvent;
+import de.back2heaven.fuzzy.gui.preview.Preview;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
