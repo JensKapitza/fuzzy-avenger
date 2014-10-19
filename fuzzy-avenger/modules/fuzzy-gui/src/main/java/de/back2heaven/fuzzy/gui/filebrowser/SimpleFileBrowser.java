@@ -10,16 +10,20 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 
-import de.back2heaven.fuzzy.gui.events.EventError;
-import de.back2heaven.fuzzy.gui.events.PreviewEvent;
-import de.back2heaven.fuzzy.gui.preview.Preview;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
+import de.back2heaven.fuzzy.gui.events.EventError;
+import de.back2heaven.fuzzy.gui.events.PreviewEvent;
+import de.back2heaven.fuzzy.gui.targetview.PageItems;
+import de.back2heaven.fuzzy.gui.targetview.TargetView;
 
 public class SimpleFileBrowser extends ListView<Path> {
 
-	public SimpleFileBrowser(Path base, Preview prev) throws IOException {
+	public SimpleFileBrowser(Path base) throws IOException {
 		setCellFactory(c -> {
 			ListCell<Path> cell = new PathListCell();
 			return cell;
@@ -29,7 +33,7 @@ public class SimpleFileBrowser extends ListView<Path> {
 				(c, old, newO) -> {
 					if (newO != null) {
 						PreviewEvent pe = new PreviewEvent(this, newO);
-						prev.fireEvent(pe);
+						getScene().lookup("#preview").fireEvent(pe);
 					}
 
 				});
@@ -52,6 +56,16 @@ public class SimpleFileBrowser extends ListView<Path> {
 				}
 			}
 
+		});
+
+		setOnDragDetected(de -> {
+			Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+
+			ClipboardContent content = new ClipboardContent();
+			Path pi = getSelectionModel().getSelectedItem();
+
+			content.put(TargetView.PAGE_ITEM_FORMAT, new PageItems(pi));
+			dragBoard.setContent(content);
 		});
 
 	}

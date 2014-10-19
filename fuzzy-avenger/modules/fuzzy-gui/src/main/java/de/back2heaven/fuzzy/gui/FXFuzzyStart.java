@@ -20,12 +20,10 @@ public class FXFuzzyStart extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		BorderPane root = new BorderPane();
 		root.setTop(new MyMenu());
-		VBox box = new VBox();
 		Preview p = new Preview();
-		box.getChildren().add(p);
-		root.setCenter(box);
+		root.setCenter(p);
 
-		root.setLeft(new SimpleFileBrowser(Paths.get("/home/jens"),p));
+		root.setLeft(new SimpleFileBrowser(Paths.get("/home/jens")));
 		TargetView tv = new TargetView();
 		tv.getItems()
 				.addAll(new PageItem("demo", PathListCell.class

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javafx.scene.image.Image;
 
@@ -41,11 +42,20 @@ public class PageItem implements Serializable {
 	private Serializable[] data;
 
 	private URL iconPath;
+	private transient volatile Object cache;
 
 	public PageItem(String name, URL icon, Serializable... data) {
 		this.data = data;
 		this.name = name;
 		this.iconPath = icon;
+	}
+
+	public void setCache(Object cache) {
+		this.cache = cache;
+	}
+
+	public Object getCache() {
+		return cache;
 	}
 
 	public Serializable[] getData() {
@@ -65,15 +75,19 @@ public class PageItem implements Serializable {
 
 	public void countUp(List<PageItem> items) {
 		String base = name.split("#")[0].trim();
-		Optional<Integer> intx = items
-				.stream()
-				.filter(i -> i.getName().startsWith(base)
-						&& i.getName().contains("#"))
-				.map(p -> p.getName().split("#")[1])
-				.map(i -> Integer.parseInt(i)).max(Integer::compare);
-		intx.orElse(1);
-		int num = intx.isPresent() ? intx.get() : 0;
-		name = base + " #" + (num + 1);
+		List<String> names = items.stream()
+				.filter(i -> i != this && i.getName().startsWith(base))
+				.map(i -> i.getName()).collect(Collectors.toList());
+
+		if (names.size() > 0) {
+			Optional<Integer> intx = names.stream()
+					.filter(i -> i.contains("#")).map(p -> p.split("#")[1])
+					.map(i -> Integer.parseInt(i)).max(Integer::compare);
+
+			intx.orElse(1);
+			int num = intx.isPresent() ? intx.get() : 1;
+			name = base + " #" + (num + 1);
+		}
 
 	}
 }

@@ -14,15 +14,8 @@ import javafx.scene.input.TransferMode;
 
 public class TargetView extends ListView<PageItem> {
 
-	private DataFormat pageItemDataFormat = new DataFormat("pageItemDataFormat");
-
-	private static class PageItems extends ArrayList<PageItem> {
-		public PageItems(ObservableList<PageItem> pi) {
-			super(pi);
-		}
-
-		private static final long serialVersionUID = 856918456143627867L;
-	}
+	public static final DataFormat PAGE_ITEM_FORMAT = new DataFormat(
+			"pageItemDataFormat");
 
 	public TargetView() {
 		setCellFactory(e -> {
@@ -37,8 +30,8 @@ public class TargetView extends ListView<PageItem> {
 			ClipboardContent content = new ClipboardContent();
 			ObservableList<PageItem> pi = getSelectionModel()
 					.getSelectedItems();
-			content.put(pageItemDataFormat, new PageItems(pi));
-//			getItems().removeAll(pi);
+			content.put(PAGE_ITEM_FORMAT, new PageItems(pi));
+			// getItems().removeAll(pi);
 			dragBoard.setContent(content);
 			getSelectionModel().clearSelection();
 		});
@@ -49,7 +42,7 @@ public class TargetView extends ListView<PageItem> {
 
 		setOnDragDropped(dragEvent -> {
 			PageItems item = (PageItems) dragEvent.getDragboard().getContent(
-					pageItemDataFormat);
+					PAGE_ITEM_FORMAT);
 
 			EventTarget target = dragEvent.getTarget();
 
@@ -62,9 +55,8 @@ public class TargetView extends ListView<PageItem> {
 				p = p.getParent();
 			}
 			int index = -1;
-			System.out.println(dragEvent.getTransferMode());
-			if (dragEvent.getTransferMode() == TransferMode.MOVE){
-				System.out.println("---");
+
+			if (dragEvent.getTransferMode() == TransferMode.MOVE) {
 				getItems().removeAll(item);
 			} else {
 				ArrayList<PageItem> itemsx = new ArrayList<>(getItems());
@@ -74,7 +66,7 @@ public class TargetView extends ListView<PageItem> {
 					e.countUp(itemsx);
 				});
 			}
-			
+
 			if (p instanceof PageItemListCell) {
 				index = getItems().indexOf(((PageItemListCell) p).getItem());
 			}
