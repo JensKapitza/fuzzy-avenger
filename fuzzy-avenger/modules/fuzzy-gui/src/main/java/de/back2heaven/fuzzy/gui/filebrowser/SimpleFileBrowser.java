@@ -10,8 +10,10 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
@@ -28,6 +30,8 @@ public class SimpleFileBrowser extends ListView<Path> {
 			ListCell<Path> cell = new PathListCell();
 			return cell;
 		});
+		
+		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		getSelectionModel().selectedItemProperty().addListener(
 				(c, old, newO) -> {
@@ -62,7 +66,7 @@ public class SimpleFileBrowser extends ListView<Path> {
 			Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
 
 			ClipboardContent content = new ClipboardContent();
-			Path pi = getSelectionModel().getSelectedItem();
+			ObservableList<Path> pi = getSelectionModel().getSelectedItems();
 
 			content.put(TargetView.PAGE_ITEM_FORMAT, new PageItems(pi));
 			dragBoard.setContent(content);

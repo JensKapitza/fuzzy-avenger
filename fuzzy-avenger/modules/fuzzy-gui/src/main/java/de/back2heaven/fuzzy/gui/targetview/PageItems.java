@@ -2,7 +2,7 @@ package de.back2heaven.fuzzy.gui.targetview;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import javafx.collections.ObservableList;
 
@@ -11,9 +11,11 @@ public class PageItems extends ArrayList<PageItem> {
 		super(pi);
 	}
 
-	public PageItems(Path pi) {
-		super(Arrays.asList(new PageItem(pi.getFileName().toString(), null, pi
-				.toUri())));
+	public PageItems(List<Path> pi) {
+		for (Path p : pi) {
+			add(new PageItem(p.getFileName().toString(), null, p.toUri()));
+		}
+
 	}
 
 	private static final long serialVersionUID = 856918456143627867L;
