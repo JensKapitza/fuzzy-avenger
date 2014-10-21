@@ -2,6 +2,7 @@ package de.back2heaven.fuzzy.gui.targetview;
 
 import java.util.ArrayList;
 
+import de.back2heaven.fuzzy.gui.events.ToolbarEvent;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -18,9 +19,21 @@ public class TargetView extends ListView<PageItem> {
 			"pageItemDataFormat");
 
 	public TargetView() {
+		setId("targetview");
 		setCellFactory(e -> {
 			return new PageItemListCell();
 		});
+
+		getSelectionModel().selectedIndexProperty().addListener(
+				(a, b, c) -> {
+
+					ToolbarEvent ev = new ToolbarEvent(this,
+							c.intValue() != -1 ? ToolbarEvent.ENABLE
+									: ToolbarEvent.DISABLE);
+					
+					getScene().lookup("#targettoolbar").fireEvent(ev);
+
+				});
 
 		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -79,6 +92,14 @@ public class TargetView extends ListView<PageItem> {
 
 			dragEvent.setDropCompleted(true);
 
+		});
+		
+		
+		addEventHandler(ToolbarEvent.ROTATE, e-> {
+			System.out.println("R event");
+		});
+		addEventHandler(ToolbarEvent.SAVE, e-> {
+			System.out.println("SAVE!!");
 		});
 
 	}

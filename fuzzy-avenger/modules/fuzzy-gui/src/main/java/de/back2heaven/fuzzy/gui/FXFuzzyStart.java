@@ -5,10 +5,12 @@ import java.nio.file.Paths;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import de.back2heaven.fuzzy.gui.filebrowser.SimpleFileBrowser;
 import de.back2heaven.fuzzy.gui.menu.MyMenu;
 import de.back2heaven.fuzzy.gui.preview.Preview;
+import de.back2heaven.fuzzy.gui.targetview.TargetToolbar;
 import de.back2heaven.fuzzy.gui.targetview.TargetView;
 
 public class FXFuzzyStart extends Application {
@@ -22,7 +24,8 @@ public class FXFuzzyStart extends Application {
 
 		root.setLeft(new SimpleFileBrowser(Paths.get("/home/jens")));
 		TargetView tv = new TargetView();
-		root.setRight(tv);
+		VBox box = new VBox(tv, new TargetToolbar());
+		root.setRight(box);
 
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
