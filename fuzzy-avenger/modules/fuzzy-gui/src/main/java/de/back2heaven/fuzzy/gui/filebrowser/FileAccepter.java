@@ -3,12 +3,19 @@ package de.back2heaven.fuzzy.gui.filebrowser;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystemException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -21,7 +28,13 @@ import javax.imageio.stream.ImageInputStream;
 public class FileAccepter {
 
 	public static boolean isImage(Path file) throws IOException {
+		if (Files.isDirectory(file)) {
+			return false;
+		}
 		ImageInputStream input = ImageIO.createImageInputStream(file.toFile());
+		if (input == null) {
+			return false;
+		}
 		Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
 
 		if (readers.hasNext()) {
@@ -32,12 +45,15 @@ public class FileAccepter {
 	}
 
 	public static boolean isPDF(Path file) throws IOException {
-		// PDF erlauben
+		if (file == null || Files.isDirectory(file)) {
+			return false;
+		}
 		byte[] buffer = new byte[4];
-		InputStream in = Files.newInputStream(file);
-		in.read(buffer);
-		in.close();
-
+		try (InputStream in = Files.newInputStream(file);) {
+			in.read(buffer);
+		} catch (FileSystemException fse) {
+			return false;
+		}
 		// check if it is pdf
 		if (buffer[0] == '%' && buffer[1] == 'P' && buffer[2] == 'D'
 				&& buffer[3] == 'F') {
@@ -47,6 +63,9 @@ public class FileAccepter {
 	}
 
 	public static boolean accepts(Path file) throws IOException {
+		if (file == null || Files.isDirectory(file)) {
+			return false;
+		}
 		// Get the reader
 		if (isImage(file) || isPDF(file)) {
 			return true;
@@ -114,5 +133,46 @@ public class FileAccepter {
 	public static List<Image> readImages(Path file, boolean onePageOnly)
 			throws IOException {
 		return readImages(file.toFile(), onePageOnly);
+	}
+
+	public static boolean isDirectory(Path file) throws IOException {
+		return isDirectory(file, true);
+	}
+
+	public static boolean isDirectory(Path xfile, boolean follow)
+			throws IOException {
+
+		if (!Files.isDirectory(xfile)) {
+			return false;
+		}
+		// sind noch interessante Files vorhanden also entweder ein weiterer dir
+		// oder
+		// imgs
+
+		SimpleBooleanProperty walkOK = new SimpleBooleanProperty(false);
+		Files.walkFileTree(xfile, EnumSet.noneOf(FileVisitOption.class), 1,
+				new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult visitFile(Path file,
+							BasicFileAttributes attrs) throws IOException {
+						if (walkOK.get()) {
+							return FileVisitResult.TERMINATE;
+						}
+						if (Files.isDirectory(file)) {
+							if (follow) {
+								walkOK.set(FileAccepter
+										.isDirectory(file, false));
+							} else {
+								walkOK.set(true);
+							}
+						} else if (FileAccepter.accepts(file)) {
+							walkOK.set(true);
+						}
+						return super.visitFile(file, attrs);
+					}
+
+				});
+
+		return walkOK.get();
 	}
 }

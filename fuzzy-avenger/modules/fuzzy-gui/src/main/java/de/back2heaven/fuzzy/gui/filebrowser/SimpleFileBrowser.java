@@ -89,7 +89,7 @@ public class SimpleFileBrowser extends ListView<Path> {
 					@Override
 					public FileVisitResult visitFile(Path file,
 							BasicFileAttributes attrs) throws IOException {
-						if (Files.isDirectory(file)
+						if (FileAccepter.isDirectory(file)
 								|| FileAccepter.accepts(file)) {
 							getItems().add(file);
 						}
