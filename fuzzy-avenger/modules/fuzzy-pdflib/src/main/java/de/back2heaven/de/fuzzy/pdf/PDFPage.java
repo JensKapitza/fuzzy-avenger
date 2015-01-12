@@ -70,7 +70,7 @@ public class PDFPage {
 			}
 		});
 
-		containsImagesOnly =  containsImagesOnly && images.size() > 0;
+		containsImagesOnly = containsImagesOnly && images.size() > 0;
 
 		if (containsImagesOnly && images.size() == 1) {
 			innerData = images.get(0);
@@ -94,10 +94,7 @@ public class PDFPage {
 	}
 
 	public PDPage getPage() {
-		if (innerData != null) {
-			return page;
-		}
-		return null;
+		return page;
 	}
 
 	public boolean containsImagesOnly() {

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
@@ -23,6 +24,7 @@ public class PDFFile {
 	private String password;
 
 	private PDFRenderer renderer;
+	private PDPageTree pageTree;
 
 	public PDFFile(Path path, String password) throws IOException {
 		this.path = path;
@@ -34,6 +36,7 @@ public class PDFFile {
 		parse();
 		renderer = new PDFRenderer(document);
 		this.pages = document.getNumberOfPages();
+		pageTree = document.getPages();
 	}
 
 	private void parse() throws IOException {
@@ -64,8 +67,7 @@ public class PDFFile {
 		if (pageNum > document.getNumberOfPages()) {
 			throw new IOException("page index is out of range");
 		}
-		PDPage page = (PDPage) document.getDocumentCatalog().getPages()
-				.get(pageNum);
+		PDPage page = pageTree.get(pageNum);
 		return new PDFPage(this, renderer, page, pageNum);
 	}
 
