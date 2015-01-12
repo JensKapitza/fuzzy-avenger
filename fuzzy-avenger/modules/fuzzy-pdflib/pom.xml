@@ -3,6 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>fuzzy-pdflib</artifactId>
 	<name>PDF lib</name>
+	<properties>
+		<twelvemonkeys.version>3.0.2</twelvemonkeys.version>
+	</properties>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -26,20 +29,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>1.44</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk15</artifactId>
-			<version>1.44</version>
-		</dependency>
-		<dependency>
 			<groupId>net.java.dev.jai-imageio</groupId>
 			<artifactId>jai-imageio-core-standalone</artifactId>
 			<version>1.2-pre-dr-b04-2014-09-13</version>
 		</dependency>
+
 		<dependency>
 			<groupId>net.java.dev.jai-imageio</groupId>
 			<artifactId>jai-imageio-jpeg2000</artifactId>
@@ -49,41 +43,37 @@
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-core</artifactId>
-			<version>3.0</version>
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-jpeg</artifactId>
-			<version>3.0</version>
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-iff</artifactId>
-			<version>3.0</version>
+
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-tiff</artifactId>
-			<version>3.0</version>
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-psd</artifactId>
-			<version>3.0</version>
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-icns</artifactId>
-			<version>3.0</version>
+			<version>${twelvemonkeys.version}</version>
 		</dependency>
-		
-		
-		<!-- drop this <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-imaging</artifactId> 
-			<version>1.0-SNAPSHOT</version> </dependency> -->
-
 	</dependencies>
 	<parent>
 		<groupId>de.back2heaven</groupId>

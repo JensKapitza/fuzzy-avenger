@@ -30,7 +30,7 @@ public class PDFFile {
 		if (path == null || !Files.exists(path)) {
 			throw new IOException("pdf file not found");
 		}
-		document = PDDocument.loadNonSeq(path.toFile());
+		document = PDDocument.load(path.toFile());
 		parse();
 		renderer = new PDFRenderer(document);
 		this.pages = document.getNumberOfPages();
@@ -64,9 +64,9 @@ public class PDFFile {
 		if (pageNum > document.getNumberOfPages()) {
 			throw new IOException("page index is out of range");
 		}
-		PDPage page = (PDPage) document.getDocumentCatalog().getAllPages()
+		PDPage page = (PDPage) document.getDocumentCatalog().getPages()
 				.get(pageNum);
-		return new PDFPage(this,renderer, page, pageNum);
+		return new PDFPage(this, renderer, page, pageNum);
 	}
 
 	public int getPages() {
@@ -80,10 +80,10 @@ public class PDFFile {
 	public Path getPath() {
 		return path;
 	}
-	
-	public List<PDFPage> getPages(int ... pageNums) throws IOException{
-		ArrayList<PDFPage> pages=new ArrayList<>();
-		for (int pageNum : pageNums){
+
+	public List<PDFPage> getPages(int... pageNums) throws IOException {
+		ArrayList<PDFPage> pages = new ArrayList<>();
+		for (int pageNum : pageNums) {
 			pages.add(getPage(pageNum));
 		}
 		return pages;

@@ -2,11 +2,11 @@ package de.back2heaven.de.fuzzy.pdf;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImage;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -48,19 +48,29 @@ public class PDFPage {
 	}
 
 	private void parse() throws IOException {
-		rotation = page.findRotation();
+		rotation = page.getRotation();
 
 		// nur images auf der seite?
 		// ich muss diese extrahieren wenn kein text hier steht,
 		// vom kopierer gebautes PDF?
-		Map<String, PDXObject> allObj = page.getResources().getXObjects();
+		PDResources res = page.getResources();
 
-		List<PDXObject> liste = allObj.entrySet().stream()
-				.map(e -> e.getValue()).collect(Collectors.toList());
-		List<PDImage> images = liste.stream().filter(p -> p instanceof PDImage)
-				.map(e -> (PDImage) e).collect(Collectors.toList());
+		List<PDImage> images = new ArrayList<>();
+		containsImagesOnly = true;
+		res.getXObjectNames().forEach(name -> {
+			try {
+				PDXObject obj = res.getXObject(name);
+				if (obj instanceof PDImage) {
+					images.add((PDImage) obj);
+				} else {
+					containsImagesOnly = false;
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
 
-		containsImagesOnly = liste.size() == images.size();
+		containsImagesOnly =  containsImagesOnly && images.size() > 0;
 
 		if (containsImagesOnly && images.size() == 1) {
 			innerData = images.get(0);
