@@ -26,15 +26,20 @@ public class TargetPDF {
 	}
 
 	public PDPage importPage(PDFPage page) throws IOException {
-		PDPage xpage = document.importPage(page.getPage());
-		xpage.setResources(page.getPage().getResources());
-		processAnnotations(xpage);
-		return xpage;
+		if (page.containsImagesOnly()) {
+			return addPage(page.getImage());
+		} else {
+			PDPage xpage = document.importPage(page.getPage());
+			xpage.setResources(page.getResources());
+			processAnnotations(xpage);
+			return xpage;
+		}
 	}
 
 	private void processAnnotations(PDPage imported) throws IOException {
 		List<PDAnnotation> annotations = imported.getAnnotations();
 		for (PDAnnotation annotation : annotations) {
+			annotation.setPage(null);
 			if (annotation instanceof PDAnnotationLink) {
 				PDAnnotationLink link = (PDAnnotationLink) annotation;
 				PDDestination destination = link.getDestination();
@@ -47,9 +52,8 @@ public class TargetPDF {
 				if (destination instanceof PDPageDestination) {
 					((PDPageDestination) destination).setPage(null);
 				}
-			} else {
-				annotation.setPage(null);
 			}
+
 		}
 	}
 

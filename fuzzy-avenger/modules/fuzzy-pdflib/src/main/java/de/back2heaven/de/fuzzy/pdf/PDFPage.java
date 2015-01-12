@@ -26,6 +26,8 @@ public class PDFPage {
 
 	private float dpi = 300;
 
+	private PDResources res;
+
 	public PDFPage(PDFFile file, PDFRenderer renderer, PDPage page, int pageNum)
 			throws IOException {
 		this.pdfFile = file;
@@ -53,7 +55,7 @@ public class PDFPage {
 		// nur images auf der seite?
 		// ich muss diese extrahieren wenn kein text hier steht,
 		// vom kopierer gebautes PDF?
-		PDResources res = page.getResources();
+		res = page.getResources();
 
 		List<PDImage> images = new ArrayList<>();
 		containsImagesOnly = true;
@@ -107,6 +109,10 @@ public class PDFPage {
 
 	public float getDPI() {
 		return dpi;
+	}
+
+	public PDResources getResources() {
+		return res;
 	}
 
 }

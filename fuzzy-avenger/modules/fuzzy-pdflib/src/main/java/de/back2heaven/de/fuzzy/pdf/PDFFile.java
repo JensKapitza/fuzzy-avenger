@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -14,7 +15,7 @@ import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-public class PDFFile {
+public class PDFFile implements Iterable<PDFPage> {
 	private Path path;
 
 	private PDDocument document;
@@ -93,6 +94,19 @@ public class PDFFile {
 
 	public void close() throws IOException {
 		document.close();
+	}
+
+	@Override
+	public Iterator<PDFPage> iterator() {
+		ArrayList<PDFPage> pages = new ArrayList<>();
+		for (int pageNum = 0; pageNum < this.pages; pageNum++) {
+			try {
+				pages.add(getPage(pageNum));
+			} catch (IOException e) {
+				return null;
+			}
+		}
+		return pages.iterator();
 	}
 
 }
