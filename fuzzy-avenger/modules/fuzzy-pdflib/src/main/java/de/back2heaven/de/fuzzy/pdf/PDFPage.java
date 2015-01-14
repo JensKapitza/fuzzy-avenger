@@ -2,14 +2,12 @@ package de.back2heaven.de.fuzzy.pdf;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
-import org.apache.pdfbox.pdmodel.graphics.PDXObject;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImage;
-import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
 public class PDFPage {
 	private PDPage page;
@@ -21,23 +19,21 @@ public class PDFPage {
 	private int rotation;
 
 	private boolean containsImagesOnly;
-	private PDFRenderer renderer;
-	private PDImage innerData;
+	private PDXObjectImage innerData;
 
-	private float dpi = 300;
+	private int dpi = 300;
 
 	private PDResources res;
 
-	public PDFPage(PDFFile file, PDFRenderer renderer, PDPage page, int pageNum)
-			throws IOException {
+	public PDFPage(PDFFile file, int pageNum) throws IOException {
 		this.pdfFile = file;
-		this.renderer = renderer;
+		page = (PDPage) file.getDocument().getDocumentCatalog().getAllPages()
+				.get(pageNum);
 		if (pdfFile == null) {
 			throw new IOException("pdf file must be added for page def.");
 		}
 
 		// we need to load the page now
-		this.page = page;
 		this.pageNum = pageNum;
 
 		if (page == null || pageNum < 0) {
@@ -50,31 +46,20 @@ public class PDFPage {
 	}
 
 	private void parse() throws IOException {
-		rotation = page.getRotation();
-
+		Integer r = page.getRotation();
+		rotation = r == null ? 0 : r.intValue();
 		// nur images auf der seite?
 		// ich muss diese extrahieren wenn kein text hier steht,
 		// vom kopierer gebautes PDF?
 		res = page.getResources();
 
-		List<PDImage> images = new ArrayList<>();
-		containsImagesOnly = true;
-		res.getXObjectNames().forEach(name -> {
-			try {
-				PDXObject obj = res.getXObject(name);
-				if (obj instanceof PDImage) {
-					images.add((PDImage) obj);
-				} else {
-					containsImagesOnly = false;
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		});
+		List<PDXObjectImage> images = res.getXObjects().values().stream()
+				.filter(p -> p instanceof PDXObjectImage)
+				.map(p -> (PDXObjectImage) p).collect(Collectors.toList());
+		containsImagesOnly = images.size() == 1
+				&& res.getXObjects().values().size() == 1;
 
-		containsImagesOnly = containsImagesOnly && images.size() > 0;
-
-		if (containsImagesOnly && images.size() == 1) {
+		if (containsImagesOnly) {
 			innerData = images.get(0);
 		}
 
@@ -82,10 +67,12 @@ public class PDFPage {
 
 	public BufferedImage getImage() throws IOException {
 		if (innerData != null) {
-			return innerData.getImage();
+			return innerData.getRGBImage();
 		}
-		return renderer.renderImageWithDPI(pageNum, dpi);
+		return page.convertToImage(BufferedImage.TYPE_INT_RGB,dpi);
 	}
+	
+	
 
 	public int getRotation() {
 		return rotation;
@@ -103,16 +90,20 @@ public class PDFPage {
 		return containsImagesOnly;
 	}
 
-	public void setDPI(float dpi) {
+	public void setDPI(int dpi) {
 		this.dpi = dpi;
 	}
 
-	public float getDPI() {
+	public int getDPI() {
 		return dpi;
 	}
 
 	public PDResources getResources() {
 		return res;
+	}
+
+	public int getPageNumber() {
+		return pageNum;
 	}
 
 }

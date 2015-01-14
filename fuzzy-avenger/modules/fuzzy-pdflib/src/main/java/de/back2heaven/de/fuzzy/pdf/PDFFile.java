@@ -8,12 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
-import org.apache.pdfbox.rendering.PDFRenderer;
 
 public class PDFFile implements Iterable<PDFPage> {
 	private Path path;
@@ -24,9 +20,6 @@ public class PDFFile implements Iterable<PDFPage> {
 
 	private String password;
 
-	private PDFRenderer renderer;
-	private PDPageTree pageTree;
-
 	public PDFFile(Path path, String password) throws IOException {
 		this.path = path;
 		this.password = password;
@@ -35,9 +28,7 @@ public class PDFFile implements Iterable<PDFPage> {
 		}
 		document = PDDocument.load(path.toFile());
 		parse();
-		renderer = new PDFRenderer(document);
 		this.pages = document.getNumberOfPages();
-		pageTree = document.getPages();
 	}
 
 	private void parse() throws IOException {
@@ -54,7 +45,7 @@ public class PDFFile implements Iterable<PDFPage> {
 					password);
 			try {
 				document.openProtection(decryptionMaterial);
-			} catch (InvalidPasswordException e) {
+			} catch (Exception e) {
 				throw new IOException("password invalid for file: " + path);
 			}
 		}
@@ -68,8 +59,7 @@ public class PDFFile implements Iterable<PDFPage> {
 		if (pageNum > document.getNumberOfPages()) {
 			throw new IOException("page index is out of range");
 		}
-		PDPage page = pageTree.get(pageNum);
-		return new PDFPage(this, renderer, page, pageNum);
+		return new PDFPage(this, pageNum);
 	}
 
 	public int getPages() {
@@ -108,5 +98,4 @@ public class PDFFile implements Iterable<PDFPage> {
 		}
 		return pages.iterator();
 	}
-
 }

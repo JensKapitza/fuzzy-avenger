@@ -1,22 +1,23 @@
 package de.back2heaven.de.fuzzy.pdf;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.pdfbox.pdmodel.interactive.action.PDAction;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDDestination;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectForm;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
 public class TargetPDF {
 	private PDDocument document;
@@ -29,31 +30,16 @@ public class TargetPDF {
 		if (page.containsImagesOnly()) {
 			return addPage(page.getImage());
 		} else {
-			PDPage xpage = document.importPage(page.getPage());
-			xpage.setResources(page.getResources());
-			processAnnotations(xpage);
-			return xpage;
-		}
-	}
-
-	private void processAnnotations(PDPage imported) throws IOException {
-		List<PDAnnotation> annotations = imported.getAnnotations();
-		for (PDAnnotation annotation : annotations) {
-			annotation.setPage(null);
-			if (annotation instanceof PDAnnotationLink) {
-				PDAnnotationLink link = (PDAnnotationLink) annotation;
-				PDDestination destination = link.getDestination();
-				if (destination == null && link.getAction() != null) {
-					PDAction action = link.getAction();
-					if (action instanceof PDActionGoTo) {
-						destination = ((PDActionGoTo) action).getDestination();
-					}
-				}
-				if (destination instanceof PDPageDestination) {
-					((PDPageDestination) destination).setPage(null);
-				}
-			}
-
+			// this does not work!
+			// font is missing
+			PDPage px = document.importPage(page.getPage());
+			document.getDocumentCatalog()
+					.getCOSDictionary()
+					.mergeInto(
+							page.getParent().getDocument().getDocumentCatalog()
+									.getCOSDictionary());
+			px.setResources(page.getResources());
+			return px;
 		}
 	}
 
@@ -66,13 +52,13 @@ public class TargetPDF {
 		int height = image.getHeight();
 		PDPage xpage = new PDPage(new PDRectangle(width, height));
 		document.addPage(xpage);
-		PDImageXObject ximage = LosslessFactory
-				.createFromImage(document, image);
+
+		PDXObjectImage ximage = new PDJpeg(document, image);
 
 		PDPageContentStream contentStream = new PDPageContentStream(document,
 				xpage, true, true);
 
-		contentStream.drawImage(ximage, 0, 0, width * scale, height * scale);
+		contentStream.drawXObject(ximage, 0, 0, width * scale, height * scale);
 		contentStream.close();
 
 		return xpage;
@@ -80,7 +66,12 @@ public class TargetPDF {
 	}
 
 	public void saveToStream(OutputStream stream) throws IOException {
-		document.save(stream);
-		document.close();
+		try {
+			document.save(stream);
+		} catch (COSVisitorException e) {
+			throw new IOException(e);
+		} finally {
+			document.close();
+		}
 	}
 }
