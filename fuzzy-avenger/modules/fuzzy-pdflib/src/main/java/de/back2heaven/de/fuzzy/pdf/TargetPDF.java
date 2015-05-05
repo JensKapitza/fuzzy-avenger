@@ -2,22 +2,22 @@ package de.back2heaven.de.fuzzy.pdf;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFontFactory;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectForm;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.util.LayerUtility;
 
 public class TargetPDF {
 	private PDDocument document;
@@ -30,15 +30,34 @@ public class TargetPDF {
 		if (page.containsImagesOnly()) {
 			return addPage(page.getImage());
 		} else {
+
+			LayerUtility layerUtility = new LayerUtility(document);
+
+			ImageIO.write(page.getImage(), "png", new FileOutputStream(page
+					.getParent().getPath().getFileName()
+					+ "_" + page.getPageNumber() + ".png"));
 			// this does not work!
 			// font is missing
 			PDPage px = document.importPage(page.getPage());
+			px.setResources(page.getPage().findResources());
+
+			PDXObjectForm form = layerUtility.importPageAsForm(page.getParent()
+					.getDocument(), page.getPageNumber());
+
+			// These things can easily be done in a loop, too
+			AffineTransform affineTransform = new AffineTransform(); 
+			layerUtility.appendFormAsLayer(px, form, affineTransform,
+					"form"+page.getPageNumber());
+
 			document.getDocumentCatalog()
 					.getCOSDictionary()
 					.mergeInto(
 							page.getParent().getDocument().getDocumentCatalog()
 									.getCOSDictionary());
-			px.setResources(page.getResources());
+
+			px.getResources().addFont(PDFontFactory.createDefaultFont());
+			page.getPage().getResources().getFonts().values()
+					.forEach(px.getResources()::addFont);
 			return px;
 		}
 	}
